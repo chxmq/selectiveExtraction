@@ -1,0 +1,141 @@
+:root{
+  --bg: #f0ebd8;
+  --nav: #748cab;
+  --text: #0d1321;
+  --muted: #5e6b75;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.topnav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  background:var(--nav);
+  color:var(--bg);
+}
+
+.topnav .brand{ font-weight:700; font-size:1.25rem }
+.topnav .status{ font-size:0.85rem; opacity:0.95 }
+
+.container{
+  max-width:1100px;
+  margin:28px auto;
+  padding:18px;
+  position:relative;
+  min-height:64vh;
+}
+
+/* Floating uploader */
+.uploader{
+  position:absolute;
+  left:24px;
+  top:96px;
+  width:320px;
+  background:rgba(255,255,255,0.95);
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 8px 30px rgba(13,19,33,0.12);
+  z-index:40;
+}
+.drag-handle{
+  cursor:grab;
+  display:inline-block;
+  padding:6px 8px;
+  border-radius:8px;
+  background:rgba(13,19,33,0.06);
+  color:var(--text);
+  margin-bottom:10px;
+}
+.file-label input[type=file]{ display:none }
+
+/* Preview area takes 90% of container */
+.preview{
+  width:90%;
+  margin:0 auto;
+  background:#fff;
+  padding:18px;
+  border-radius:12px;
+  box-shadow:0 6px 18px rgba(13,19,33,0.06);
+}
+
+.preview-header{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:12px;
+}
+
+.drop-area{
+  border:2px dashed rgba(13,19,33,0.08);
+  padding:28px;
+  border-radius:8px;
+  text-align:center;
+  cursor:pointer;
+}
+.drop-title{ font-weight:600; font-size:16px }
+.drop-sub{ color:var(--muted); font-size:13px; margin-top:8px }
+.actions{ margin-top:12px; display:flex; gap:8px }
+.btn{ background:var(--nav); color:var(--bg); border:none; padding:8px 12px; border-radius:8px; cursor:pointer }
+
+.placeholder{ color:var(--muted); padding:28px; text-align:center }
+.doc-preview{ color:var(--text); line-height:1.6; max-width:90%; margin:1em auto }
+
+:root{
+	--bg: #f0ebd8;
+	--nav: #748cab;
+	--text: #0d1321;
+	--muted: #5e6b75;
+}
+
+*{box-sizing:border-box}
+body{ margin:0; background:var(--bg); color:var(--text); font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial }
+
+.topnav{
+	display:flex; align-items:center; justify-content:space-between; padding:14px 20px; background:var(--nav); color:var(--bg);
+}
+.topnav .brand{ font-weight:700; font-size:2em;}
+.topnav .status{ font-size:13px; opacity:0.95 }
+
+.container{ max-width:90%; margin:28px auto; padding:18px; position:relative; min-height: 90vh; }
+.uploader{ background:rgba(255,255,255,0.95); padding:12px; border-radius:12px; box-shadow:0 8px 30px rgba(13,19,33,0.12); width:320px; z-index:40 }
+.file-label input[type=file]{ display:none }
+.drag-handle{ cursor:grab; background:rgba(13,19,33,0.06); color:var(--text); padding:6px 8px; border-radius:8px; display:inline-block; margin-bottom:10px }
+
+.preview{ background:#ffffff; padding:18px; border-radius:12px;width:90%; min-height:80vh; margin:0 auto; box-shadow:0 6px 18px rgba(13,19,33,0.06) }
+.drop-area{ border:2px dashed rgba(13,19,33,0.08); padding:28px; border-radius:8px; text-align:center; cursor:pointer }
+.drop-title{ font-weight:600; font-size:16px; color:var(--text) }
+.drop-sub{ color:var(--muted); font-size:13px; margin-top:8px }
+.actions{ margin-top:12px; display:flex; gap:8px }
+.btn{ background:var(--nav); color:var(--bg); border:none; padding:8px 12px; border-radius:8px; cursor:pointer }
+
+.placeholder{ color:var(--muted); padding:28px; text-align:center; margin-top: 34vh; }
+.doc-preview{ color:var(--text); line-height:1.6; max-width: 90%;margin-left: 5%; margin-top: 5vh; }
+
+.highlightSelector{
+  position:absolute;
+  width:350px;
+  background:rgba(255,255,255,0.95);
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 8px 30px rgba(13,19,33,0.12);
+  z-index:40;
+}
+
+.highlightSelector h3{ margin:0 0 12px 0; font-size:16px }
+.highlightSelector .btn{padding: 0.35em 0.7em;}
+.add-highlight{ display:flex; gap:8px; margin-bottom:12px; align-items:center }
+.add-highlight input[type=color]{ width:50px; height:30px; border:none }
+.add-highlight input[type=text]{ flex:1; padding:6px; border:1px solid #ccc; border-radius:4px }
+.highlight-list{ list-style:none; padding:0; margin:0 0 12px 0; max-height:200px; overflow-y:auto }
+.highlight-item{ display:flex; align-items:center; gap:8px; padding:6px; border-bottom:1px solid #eee }
+.color-swatch{ width:20px; height:20px; border-radius:50%; border:1px solid #ccc }
+.remove-btn{ background:none; border:none; color:red; cursor:pointer; font-size:18px;  }
+.send-btn{ position:absolute; bottom:12px; right:12px }
+
