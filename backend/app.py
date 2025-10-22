@@ -22,8 +22,10 @@ def highlight():
     try:
         highlights_parsed = json.loads(highlights_str)
         for highlight in highlights_parsed:
+            print(highlight['description'])
+            h=highlight['description']
             completion = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
+                model="llama-3.3-70b-versatile",
                 messages=[
                 {
                     "role": "system",
@@ -47,7 +49,7 @@ def highlight():
                 },
                 {
                     "role": "user",
-                    "content": f"Document:{content},Words to highlight:{highlight}, return a JSON list of the matching words"
+                    "content": f"Document:{content},Words to highlight:{h}, return a JSON list of the matching words or sentences, depending on the type."
                 }
                 ],
                 temperature=1,
@@ -57,7 +59,7 @@ def highlight():
                 response_format={"type": "json_object"},
                 stop=None
             )
-            responses.append(json.loads(completion.choices[0].message.content)['highlighted_words'])
+            responses.append(next(iter(json.loads(completion.choices[0].message.content).values())))
     except json.JSONDecodeError:
         highlights_parsed = []
     print(responses)

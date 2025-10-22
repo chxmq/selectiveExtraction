@@ -7,6 +7,7 @@ export default function App() {
   const [pdfUrl, setPdfUrl] = useState(null)
   const [docHtml, setDocHtml] = useState('')
   const [plainText, setPlainText] = useState('')
+  const [originalDocHtml, setOriginalDocHtml] = useState('')
   const fileInputRef = useRef()
   const [pos, setPos] = useState({ x: 24, y: 96 })
   const dragging = useRef(false)
@@ -109,6 +110,7 @@ export default function App() {
           const htmlResult = await mammoth.convertToHtml({ arrayBuffer })
           const textResult = await mammoth.extractRawText({ arrayBuffer })
           setDocHtml(htmlResult.value)
+          setOriginalDocHtml(htmlResult.value)
           setPlainText(textResult.value)
         } catch (err) {
           setDocHtml(err)
@@ -130,6 +132,7 @@ export default function App() {
     setFileType(null)
     setPdfUrl(null)
     setDocHtml('')
+    setOriginalDocHtml('')
     setPlainText('')
     if (fileInputRef.current) fileInputRef.current.value = ''
     setIsUploaderCollapsed(false)
@@ -144,7 +147,33 @@ export default function App() {
   }
 
   function removeHighlight(index) {
-    setHighlights(highlights.filter((_, i) => i !== index))
+    const updatedHighlights = highlights.filter((_, i) => i !== index)
+    setHighlights(updatedHighlights)
+    
+    // Re-apply highlights by sending updated list to backend
+    if (fileType === 'doc' && updatedHighlights.length > 0) {
+      const content = plainText
+      fetch(`http://127.0.0.1:5000/api/highlight?content=${encodeURIComponent(content)}&highlights=${encodeURIComponent(JSON.stringify(updatedHighlights))}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.content && Array.isArray(data.content)) {
+            let highlightedHtml = originalDocHtml
+            data.content.forEach((words, idx) => {
+              const color = updatedHighlights[idx]?.color || '#ffff00'
+              words.forEach(word => {
+                const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                const regex = new RegExp(`(${escapedWord})`, 'gi')
+                highlightedHtml = highlightedHtml.replace(regex, `<span style="background-color: ${color}">$1</span>`)
+              })
+            })
+            setDocHtml(highlightedHtml)
+          }
+        })
+        .catch(err => console.error('Re-highlight failed:', err))
+    } else if (updatedHighlights.length === 0) {
+      // Reset to original HTML when all highlights removed
+      setDocHtml(originalDocHtml)
+    }
   }
 
   function handleSend() {
@@ -152,7 +181,24 @@ export default function App() {
     const content = fileType === 'doc' ? plainText : 'PDF content not extracted client-side'
     fetch(`http://127.0.0.1:5000/api/highlight?content=${encodeURIComponent(content)}&highlights=${encodeURIComponent(JSON.stringify(highlights))}`)
       .then(r => r.json())
-      .then(data => console.log('Sent:', data))
+      .then(data => {
+        console.log('Sent:', data)
+        // data.content is list of lists of words
+        if (fileType === 'doc' && data.content && Array.isArray(data.content)) {
+          let highlightedHtml = originalDocHtml
+          data.content.forEach((words, index) => {
+            const color = highlights[index]?.color || '#ffff00'
+            words.forEach(word => {
+              // Escape special regex chars in word
+              const escapedWord = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+              // Replace all occurrences
+              const regex = new RegExp(`(${escapedWord})`, 'gi')
+              highlightedHtml = highlightedHtml.replace(regex, `<span style="background-color: ${color}">$1</span>`)
+            })
+          })
+          setDocHtml(highlightedHtml)
+        }
+      })
       .catch(err => console.error('Send failed:', err))
   }
 
