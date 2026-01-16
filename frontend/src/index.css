@@ -159,24 +159,70 @@ body::before {
 .topnav .brand {
   font-family: var(--font-display);
   font-size: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  background: var(--gradient-brand);
-  background-size: 200% 200%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  animation: gradientShift 8s ease infinite;
-  transition: transform var(--transition-base);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all var(--transition-smooth);
 }
 
-.topnav .brand:hover {
-  transform: scale(1.02);
+.brand-static {
+  color: var(--text-primary);
+  text-shadow: 
+    0 0 20px rgba(66, 133, 244, 0.3),
+    0 0 40px rgba(66, 133, 244, 0.15),
+    0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-@keyframes gradientShift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
+.brand-box {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: linear-gradient(135deg, #1E3A8A 0%, #1E1B4B 100%);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-weight: 700;
+  box-shadow: 
+    0 0 20px rgba(30, 58, 138, 0.4),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all var(--transition-smooth);
+  overflow: hidden;
+  position: relative;
+  width: fit-content;
+  min-width: auto;
+}
+
+.topnav .brand:hover .brand-box {
+  box-shadow: 
+    0 0 30px rgba(30, 58, 138, 0.6),
+    0 6px 16px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.topnav .brand:hover .brand-static {
+  text-shadow: 
+    0 0 30px rgba(66, 133, 244, 0.4),
+    0 0 60px rgba(66, 133, 244, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.brand-rotating {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  overflow: hidden;
+  position: relative;
+  white-space: nowrap;
+}
+
+.brand-rotating .text-rotate {
+  white-space: nowrap;
+  width: fit-content;
 }
 
 .topnav .status {
@@ -209,6 +255,13 @@ body::before {
   50% { opacity: 0.5; transform: scale(0.8); }
 }
 
+.status-rotating {
+  display: inline-flex;
+  align-items: center;
+  min-width: 80px;
+  justify-content: center;
+}
+
 /* ============================================
    Main Container
    ============================================ */
@@ -222,6 +275,7 @@ body::before {
   max-width: 1600px;
   margin: 0 auto;
   width: 100%;
+  z-index: 1;
 }
 
 /* Sidebar Layout */

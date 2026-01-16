@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import mammoth from 'mammoth'
+import Waves from './components/Waves'
+import RotatingText from './components/RotatingText'
 
 export default function App() {
   const [message, setMessage] = useState('')
@@ -18,11 +20,36 @@ export default function App() {
   // Predefined color palette
   const colorPalette = ['#4285F4', '#34A853', '#EA4335', '#FBBC05', '#9B72F2', '#00BCD4', '#FF6B6B', '#4ECDC4']
 
+  const [isBackendOnline, setIsBackendOnline] = useState(false)
+  const [isChecking, setIsChecking] = useState(true)
+
   useEffect(() => {
-    fetch('http://127.0.0.1:5001/api/hello')
-      .then(r => r.json())
-      .then(data => setMessage(data.message))
-      .catch(() => setMessage('Backend Offline'))
+    const checkBackend = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5001/api/hello')
+        const data = await response.json()
+        if (data.message === 'Hello from Flask backend!') {
+          setIsBackendOnline(true)
+          setMessage('Hello from Flask backend!')
+        } else {
+          setIsBackendOnline(false)
+          setMessage('Backend Offline')
+        }
+      } catch (error) {
+        setIsBackendOnline(false)
+        setMessage('Backend Offline')
+      } finally {
+        setIsChecking(false)
+      }
+    }
+
+    // Initial check
+    checkBackend()
+
+    // Check every 5 seconds
+    const interval = setInterval(checkBackend, 5000)
+
+    return () => clearInterval(interval)
   }, [])
 
   function handleFile(e) {
@@ -148,10 +175,39 @@ export default function App() {
 
   return (
     <div className="app-root">
+      <Waves
+        lineColor="rgba(255, 255, 255, 0.18)"
+        backgroundColor="rgba(0, 0, 0, 0.1)"
+        waveSpeedX={0.02}
+        waveSpeedY={0.01}
+        waveAmpX={40}
+        waveAmpY={20}
+        friction={0.9}
+        tension={0.01}
+        maxCursorMove={120}
+        xGap={12}
+        yGap={36}
+      />
       <nav className="topnav">
-        <div className="brand">Selective Extraction</div>
-        <div className="status" style={{ color: message === 'Hello from Flask backend!' ? '#34A853' : '#EA4335' }}>
-          {message === 'Hello from Flask backend!' ? 'Online' : message === 'Backend Offline' ? 'Offline' : 'Connecting...'}
+        <div className="brand">
+          <span className="brand-static">Selective</span>{' '}
+          <span className="brand-box">
+            <RotatingText
+              texts={['Extraction', 'AI', 'Smart', 'Data']}
+              mainClassName="brand-rotating"
+              staggerFrom="last"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "-120%" }}
+              staggerDuration={0.02}
+              splitLevelClassName="overflow-hidden"
+              transition={{ type: "spring", damping: 30, stiffness: 400 }}
+              rotationInterval={6000}
+            />
+          </span>
+        </div>
+        <div className="status" style={{ color: isBackendOnline ? '#34A853' : isChecking ? '#FBBC05' : '#EA4335' }}>
+          {isChecking ? 'Connecting' : isBackendOnline ? 'Online' : 'Offline'}
         </div>
       </nav>
 
