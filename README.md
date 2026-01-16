@@ -1,55 +1,129 @@
-# TextSelecter - Starter Frontend + Backend
+# Selective Extraction
 
 This workspace contains a minimal React frontend (Vite) and a Flask backend.
 
-Overview
---------
-- Frontend: Vite + React app at `frontend/` (dev server on port 3000)
-- Backend: Flask app at `backend/` (dev server on port 5000)
+## Features
 
-The frontend makes a request to `http://127.0.0.1:5000/api/hello` by default. CORS is enabled on the backend for development.
+- 📄 **Document Support**: Upload and process PDF and DOCX files
+- 🎯 **Smart Extraction**: Define custom extraction rules to find specific data
+- 🎨 **Visual Highlighting**: Color-coded highlights for different extraction types
+- ⚡ **Real-time Processing**: Fast AI-powered extraction using Groq
+- 🌊 **Modern UI**: Beautiful animated interface with wave effects
 
-Quick start (Windows PowerShell)
---------------------------------
+## Tech Stack
 
-Open two PowerShell windows or two terminals in VS Code.
+- **Frontend**: React + Vite
+- **Backend**: Flask (Python)
+- **AI**: Groq API for text extraction
+- **Styling**: Custom CSS with glassmorphism effects
 
-1) Frontend
+## Prerequisites
 
+- Node.js (v16+)
+- Python 3.8+
+- Groq API Key ([Get one here](https://console.groq.com/))
+
+## Setup
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd selectiveExtraction
 ```
-# from repository root
-cd .\frontend
-npm install
-npm run dev
-```
 
-This starts the Vite dev server (default port 3000). If your browser doesn't open automatically, visit http://localhost:3000
+### 2. Backend Setup
 
-2) Backend
+```bash
+cd backend
 
-```
-# from repository root
-cd .\backend
-# create a virtual environment (recommended)
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+
+# Install dependencies
 pip install -r requirements.txt
+
+# Create .env file from example
+cp .env.example .env
+
+# Edit .env and add your Groq API key
+# GROQ_API_KEY=your_actual_api_key_here
+
+# Run the backend server
 python app.py
 ```
 
-The Flask app runs on port 5000 by default. If PowerShell prevents activation due to an ExecutionPolicy, run PowerShell as Administrator and allow scripts, or use `Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned`.
+The backend will run on `http://127.0.0.1:5001`
 
-Test the backend (PowerShell / curl)
+### 3. Frontend Setup
+
+```bash
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The frontend will run on `http://localhost:3000` (or next available port)
+
+## Usage
+
+1. **Upload a Document**: Click the upload area and select a PDF or DOCX file
+2. **Define Extraction Rules**: Add rules describing what to extract (e.g., "Dates", "Names", "Email addresses")
+3. **Choose Colors**: Select colors for each extraction rule
+4. **Extract**: Click "Extract Highlights" to process the document
+5. **View Results**: See highlighted text in the preview area
+
+## Project Structure
 
 ```
-curl http://127.0.0.1:5000/api/hello
+selectiveExtraction/
+├── backend/
+│   ├── app.py              # Flask backend server
+│   ├── requirements.txt    # Python dependencies
+│   ├── .env.example        # Environment variables template
+│   └── venv/               # Virtual environment (gitignored)
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx         # Main React component
+│   │   ├── components/     # React components
+│   │   └── index.css       # Global styles
+│   ├── package.json        # Node dependencies
+│   └── vite.config.js      # Vite configuration
+└── README.md
 ```
 
-What was created
-----------------
-- `frontend/` - Vite + React starter with a small page that fetches `/api/hello`.
-- `backend/` - Flask app with one endpoint: `/api/hello`.
-- Root `README.md` - this file with run instructions.
+## API Endpoints
+
+- `GET /api/hello` - Health check endpoint
+- `POST /api/highlight` - Extract highlights from document content
+
+## Environment Variables
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+## Development
+
+### Backend
+- Runs on port `5001` by default
+- Debug mode enabled for development
+
+### Frontend
+- Hot module replacement enabled
+- Vite dev server with fast refresh
 
 Notes & next steps
 ------------------
