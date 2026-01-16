@@ -1,11 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
+import os
 from groq import Groq
 from dotenv import load_dotenv
 
 load_dotenv()
-client = Groq()
+api_key = os.getenv("GROQ_API_KEY")
+if not api_key:
+    print("WARNING: GROQ_API_KEY not found in environment or .env file.")
+client = Groq(api_key=api_key) if api_key else None
 
 app = Flask(__name__)
 CORS(app)
@@ -85,14 +89,23 @@ def deduplicate_highlights(highlights):
 def hello():
     return jsonify({ 'message': 'Hello from Flask backend!' })
 
-@app.route('/api/highlight')
+@app.route('/api/highlight', methods=['POST'])
 def highlight():
-    content = request.args.get('content', '').replace("%20"," ")
-    highlights_str = request.args.get('highlights', '[]')
+    if not client:
+        return jsonify({
+            'content': [],
+            'message': 'Error: GROQ_API_KEY is missing. Please check your backend .env file.'
+        }), 500
+        
+    data = request.get_json()
+    if not data:
+        return jsonify({'message': 'No data provided'}), 400
+        
+    content = data.get('content', '')
+    highlights_parsed = data.get('highlights', [])
     responses=[]
     
     try:
-        highlights_parsed = json.loads(highlights_str)
         print(f"Received {len(highlights_parsed)} highlights to process")
         print(f"Document length: {len(content)} characters")
         
@@ -177,4 +190,4 @@ def highlight():
     })
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5001, debug=True)
