@@ -4,7 +4,7 @@ This workspace contains a minimal React frontend (Vite) and a Flask backend.
 
 ## Features
 
-- 📄 **Document Support**: Upload and process PDF and DOCX files
+- 📄 **Document Support**: Upload and process PDF, DOCX, and TXT files
 - 🎯 **Smart Extraction**: Define custom extraction rules to find specific data
 - 🎨 **Visual Highlighting**: Color-coded highlights for different extraction types
 - ⚡ **Real-time Processing**: Fast AI-powered extraction using Groq
@@ -77,7 +77,7 @@ The frontend will run on `http://localhost:3000` (or next available port)
 
 ## Usage
 
-1. **Upload a Document**: Click the upload area and select a PDF or DOCX file
+1. **Upload a Document**: Click the upload area and select a PDF, DOCX, or TXT file
 2. **Define Extraction Rules**: Add rules describing what to extract (e.g., "Dates", "Names", "Email addresses")
 3. **Choose Colors**: Select colors for each extraction rule
 4. **Extract**: Click "Extract Highlights" to process the document

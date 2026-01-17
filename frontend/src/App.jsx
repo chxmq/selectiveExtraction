@@ -84,10 +84,33 @@ export default function App() {
       reader.readAsArrayBuffer(file)
       setIsUploaderCollapsed(true)
       setIsHighlightSelectorVisible(true)
+    } else if (name.endsWith('.txt')) {
+      setFileType('txt')
+      setPdfUrl(null)
+      const reader = new FileReader()
+      reader.onload = () => {
+        try {
+          const textContent = reader.result
+          // Convert plain text to HTML with line breaks
+          const htmlContent = textContent.split('\n').map(line => {
+            if (line.trim() === '') return '<p>&nbsp;</p>'
+            return `<p>${line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`
+          }).join('')
+          setDocHtml(htmlContent)
+          setOriginalDocHtml(htmlContent)
+          setPlainText(textContent)
+        } catch (err) {
+          setDocHtml('<p>Error reading text file</p>')
+          setPlainText('Error reading text file')
+        }
+      }
+      reader.readAsText(file)
+      setIsUploaderCollapsed(true)
+      setIsHighlightSelectorVisible(true)
     } else {
       setFileType(null)
       setPdfUrl(null)
-      setDocHtml('<p>Unsupported file type. Please upload PDF or DOCX.</p>')
+      setDocHtml('<p>Unsupported file type. Please upload PDF, DOCX, or TXT.</p>')
       setIsUploaderCollapsed(false)
     }
   }
@@ -117,7 +140,7 @@ export default function App() {
     const updatedHighlights = highlights.filter((_, i) => i !== index)
     setHighlights(updatedHighlights)
     
-    if (fileType === 'doc' && updatedHighlights.length > 0) {
+    if ((fileType === 'doc' || fileType === 'txt') && updatedHighlights.length > 0) {
       const content = plainText
       fetch(`http://127.0.0.1:5001/api/highlight`, {
         method: 'POST',
@@ -147,7 +170,7 @@ export default function App() {
 
   function handleSend() {
     setIsLoading(true)
-    const content = fileType === 'doc' ? plainText : 'PDF content not extracted client-side'
+    const content = (fileType === 'doc' || fileType === 'txt') ? plainText : 'PDF content not extracted client-side'
     fetch(`http://127.0.0.1:5001/api/highlight`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -156,7 +179,7 @@ export default function App() {
       .then(r => r.json())
       .then(data => {
         console.log('Sent:', data)
-        if (fileType === 'doc' && data.content && Array.isArray(data.content)) {
+        if ((fileType === 'doc' || fileType === 'txt') && data.content && Array.isArray(data.content)) {
           let highlightedHtml = originalDocHtml
           data.content.forEach((words, index) => {
             const color = highlights[index]?.color || '#ffff00'
@@ -219,14 +242,14 @@ export default function App() {
                 <input
                   ref={fileInputRef}
                   type="file"
-                  accept=".pdf,.docx,.doc"
+                  accept=".pdf,.docx,.doc,.txt"
                   onChange={handleFile}
                 />
                 <div className="drop-area">
                   <div className="drop-title">
                     Drop your document
                   </div>
-                  <div className="drop-sub">Supports PDF & DOCX files</div>
+                  <div className="drop-sub">Supports PDF, DOCX & TXT files</div>
                 </div>
               </label>
               <div className="actions">
@@ -316,7 +339,7 @@ export default function App() {
           {fileType === 'pdf' && pdfUrl && (
             <div className="pdf-container">
               <div className="pdf-warning">
-                <strong>Note:</strong> Automatic highlighting is currently only supported for .docx files.
+                <strong>Note:</strong> Automatic highlighting is currently only supported for .docx and .txt files.
               </div>
               <object data={pdfUrl} type="application/pdf" width="100%" height="100%">
                 <p>PDF preview is not available. <a href={pdfUrl} style={{ color: '#4285F4' }}>Download instead</a></p>
@@ -325,6 +348,10 @@ export default function App() {
           )}
 
           {fileType === 'doc' && (
+            <div className="doc-preview" dangerouslySetInnerHTML={{ __html: docHtml }} />
+          )}
+
+          {fileType === 'txt' && (
             <div className="doc-preview" dangerouslySetInnerHTML={{ __html: docHtml }} />
           )}
 
@@ -338,7 +365,7 @@ export default function App() {
             </div>
           )}
 
-          {docHtml && fileType !== 'doc' && (
+          {docHtml && fileType !== 'doc' && fileType !== 'txt' && (
             <div className="doc-preview" dangerouslySetInnerHTML={{ __html: docHtml }} />
           )}
         </section>
